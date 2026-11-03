@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Dias de JavaScript — Aristóteles Manuel</title>
+    <meta name="description" content="Um exercício de JavaScript por dia, do zero. Todos jogáveis no navegador.">
+    <meta property="og:title" content="100 Dias de JavaScript">
+    <meta property="og:description" content="Um exercício por dia, do zero. Joga o de hoje no navegador.">
+    <meta property="og:type" content="website">
+    <style>
+        :root{
+            --fundo:#0f1f7a; --fundo2:rgba(11, 87, 228, 0.795);
+            --cartao:#e8e6f0; --texto:#22203a;
+            --acao:#2bb84f; --raio:14px;
+        }
+        *{box-sizing:border-box}
+        html{
+            min-height:100%;
+            background:linear-gradient(var(--fundo),var(--fundo2)) fixed;
+        }
+        body{
+            font-family:system-ui,sans-serif;
+            color:var(--texto);
+            max-width:420px;
+            margin:32px auto;
+            padding:20px;
+            background:var(--cartao);
+            border-radius:calc(var(--raio)*1.5);
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+        }
+        h1{margin:0;font-size:1.5rem}
+        h2{margin:0;font-size:1rem;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+        p{margin:0;line-height:1.45}
+        .progresso{display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+        .barra{height:12px;border-radius:99px;background:#fff;overflow:hidden}
+        .barra > span{display:block;height:100%;background:var(--acao);border-radius:99px}
+        .hoje{background:#fff;border-radius:var(--raio);padding:16px;display:flex;flex-direction:column;gap:10px}
+        .hoje strong{font-size:1.15rem}
+        .botao{
+            display:block;text-align:center;text-decoration:none;
+            padding:16px;border-radius:var(--raio);
+            background:var(--acao);color:#fff;font-weight:600;font-size:1rem;
+        }
+        .botao:hover{filter:brightness(1.1)}
+        ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+        li a{
+            display:flex;justify-content:space-between;gap:12px;
+            padding:14px 16px;border-radius:var(--raio);
+            background:#fff;color:var(--texto);text-decoration:none;
+        }
+        li a:hover{filter:brightness(.96)}
+        li a span:first-child{font-weight:600}
+        footer{display:flex;flex-direction:column;gap:10px;font-size:.95rem}
+        .links{display:flex;gap:16px;flex-wrap:wrap}
+        .links a{color:var(--texto);font-weight:600}
+        a:focus-visible{outline:3px solid #0b57e4;outline-offset:2px}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>100 Dias de JavaScript</h1>
+        <p>Um exercício por dia, do zero. Todos jogáveis aqui no navegador.</p>
+    </header>
+
+    <section class="progresso" aria-label="Progresso">
+        <span id="texto-progresso"></span>
+        <div class="barra"><span id="barra"></span></div>
+    </section>
+
+    <section class="hoje" aria-label="Exercício mais recente">
+        <h2>Mais recente</h2>
+        <strong id="hoje-titulo"></strong>
+        <p id="hoje-desc"></p>
+        <a class="botao" id="hoje-link" href="#">Jogar</a>
+    </section>
+
+    <section>
+        <h2>Todos os dias</h2>
+        <ul id="lista"></ul>
+    </section>
+
+    <footer>
+        <p>Aristóteles Manuel, a aprender JavaScript em público.</p>
+        <div class="links">
+            <a href="https://www.instagram.com/aristoteles_manuel" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/arist%C3%B3teles-manuel-4812a9388" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://github.com/Aristoteles-Manuel" target="_blank" rel="noopener">GitHub</a>
+            <a href="mailto:aristotelesmanuel9@gmail.com">Email</a>
+        </div>
+    </footer>
+
+    <script>
+        // Para adicionar um dia novo: acrescenta uma linha no FIM desta lista.
+        const DIAS = [
+            {n: 1,  nome: 'Olá utilizador'},
+            {n: 2,  nome: 'Sucessor e Antecessor'},
+            {n: 3,  nome: 'Dobro e Triplo'},
+            {n: 4,  nome: 'Média'},
+            {n: 5,  nome: 'Número positivo'},
+            {n: 6,  nome: 'Par ou Ímpar'},
+            {n: 7,  nome: 'Maior Número'},
+            {n: 8,  nome: 'Idade'},
+            {n: 9,  nome: 'Contagem de 1 a 100'},
+            {n: 10, nome: 'Jogo da Senha', desc: 'O computador pensa em 2 números de 1 a 3. Consegues acertar?'}
+        ]
+        const TOTAL = 100
+        const ultimo = DIAS[DIAS.length - 1]
+
+        document.getElementById('texto-progresso').textContent = `Dia ${ultimo.n} de ${TOTAL}`
+        document.getElementById('barra').style.width = `${(ultimo.n / TOTAL) * 100}%`
+        document.getElementById('hoje-titulo').textContent = `Dia ${ultimo.n} · ${ultimo.nome}`
+        document.getElementById('hoje-desc').textContent = ultimo.desc || 'Abre o exercício e experimenta.'
+        document.getElementById('hoje-link').href = `dia${ultimo.n}.html`
+
+        const lista = document.getElementById('lista')
+        for (const dia of [...DIAS].reverse()) {
+            const li = document.createElement('li')
+            const a = document.createElement('a')
+            a.href = `dia${dia.n}.html`
+            const esq = document.createElement('span')
+            esq.textContent = `Dia ${dia.n}`
+            const dir = document.createElement('span')
+            dir.textContent = dia.nome
+            a.append(esq, dir)
+            li.append(a)
+            lista.append(li)
+        }
+    </script>
+</body>
+</html>
