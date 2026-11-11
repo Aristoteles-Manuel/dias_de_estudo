@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Céu de Angola</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05060f; overflow: hidden; }
+  canvas { display: block; width: 100%; height: 100%; cursor: none; }
+  #dica {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+    color: #8a93b8; font: 14px system-ui, sans-serif; letter-spacing: .5px;
+    pointer-events: none; transition: opacity .6s;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="dica">mexe o rato · clica para criar estrelas · tecla C = Cruzeiro do Sul</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let W, H, dpr;
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- Configuração (mexe aqui para personalizar) ----------
+const CFG = {
+  quantidade: 90,        // partículas iniciais (mais de ~150 pode engasgar)
+  maxParticulas: 160,    // limite ao clicar
+  distLigacao: 110,      // distância máxima para ligar duas estrelas
+  distRato: 160,         // distância máxima para ligar ao cursor
+  velocidade: 0.25,
+  corLinha: '180, 200, 255',
+};
+
+// ---------- Cruzeiro do Sul (posições relativas 0..1) ----------
+const CRUZEIRO = [
+  { nome: 'Gacrux',  x: 0.50, y: 0.20 },
+  { nome: 'Acrux',   x: 0.50, y: 0.75 },
+  { nome: 'Mimosa',  x: 0.36, y: 0.44 },
+  { nome: 'Delta',   x: 0.62, y: 0.40 },
+  { nome: 'Epsilon', x: 0.42, y: 0.58 },
+];
+const LINHAS_CRUZEIRO = [[0, 1], [2, 3]]; // braço vertical e horizontal
+
+let modoCruzeiro = false;
+let progresso = 0; // 0..1, suaviza a transição
+
+// ---------- Partículas ----------
+const rato = { x: W / 2, y: H / 2, ativo: false };
+const particulas = [];
+
+function criarParticula(x = Math.random() * W, y = Math.random() * H) {
+  const ang = Math.random() * Math.PI * 2;
+  const v = CFG.velocidade * (0.4 + Math.random());
+  return {
+    x, y,
+    vx: Math.cos(ang) * v,
+    vy: Math.sin(ang) * v,
+    r: 0.8 + Math.random() * 1.6,
+    fase: Math.random() * Math.PI * 2,
+  };
+}
+for (let i = 0; i < CFG.quantidade; i++) particulas.push(criarParticula());
+
+// Estrelas do Cruzeiro: vivem no mesmo array, mas têm "casa"
+const estrelasCruz = CRUZEIRO.map(e => ({
+  ...criarParticula(Math.random() * W, Math.random() * H),
+  r: 2.6, casa: e, nome: e.nome, cruz: true,
+}));
+
+// ---------- Entrada ----------
+function mover(e) {
+  const p = e.touches ? e.touches[0] : e;
+  rato.x = p.clientX;
+  rato.y = p.clientY;
+  rato.ativo = true;
+  document.getElementById('dica').style.opacity = 0;
+}
+window.addEventListener('mousemove', mover);
+window.addEventListener('touchmove', mover, { passive: true });
+window.addEventListener('mouseleave', () => (rato.ativo = false));
+
+window.addEventListener('click', e => {
+  if (particulas.length < CFG.maxParticulas) {
+    particulas.push(criarParticula(e.clientX, e.clientY));
+  }
+});
+window.addEventListener('keydown', e => {
+  if (e.key.toLowerCase() === 'c') modoCruzeiro = !modoCruzeiro;
+});
+
+// ---------- Desenho ----------
+function distancia(a, b) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function linha(a, b, alpha, largura = 1) {
+  ctx.strokeStyle = `rgba(${CFG.corLinha}, ${alpha})`;
+  ctx.lineWidth = largura;
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
+
+function estrela(p, t, brilho = 1) {
+  const pulso = 1 + 0.25 * Math.sin(t * 0.003 + p.fase);
+  const raio = p.r * pulso;
+  const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, raio * 6);
+  g.addColorStop(0, `rgba(255,255,255,${0.9 * brilho})`);
+  g.addColorStop(0.3, `rgba(170,190,255,${0.35 * brilho})`);
+  g.addColorStop(1, 'rgba(170,190,255,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, raio * 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, raio, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function atualizar(p) {
+  // Atração suave ao cursor
+  if (rato.ativo) {
+    const d = distancia(p, rato);
+    if (d < CFG.distRato && d > 1) {
+      p.vx += ((rato.x - p.x) / d) * 0.012;
+      p.vy += ((rato.y - p.y) / d) * 0.012;
+    }
+  }
+  // Limita a velocidade para não "explodir"
+  const v = Math.hypot(p.vx, p.vy);
+  const vmax = CFG.velocidade * 2.2;
+  if (v > vmax) { p.vx = (p.vx / v) * vmax; p.vy = (p.vy / v) * vmax; }
+
+  p.x += p.vx;
+  p.y += p.vy;
+
+  // Wrap nas bordas
+  if (p.x < -20) p.x = W + 20;
+  if (p.x > W + 20) p.x = -20;
+  if (p.y < -20) p.y = H + 20;
+  if (p.y > H + 20) p.y = -20;
+}
+
+function atualizarCruz(p) {
+  if (modoCruzeiro) {
+    // mola em direção à posição da constelação
+    const alvoX = p.casa.x * W, alvoY = p.casa.y * H;
+    p.x += (alvoX - p.x) * 0.045;
+    p.y += (alvoY - p.y) * 0.045;
+  } else {
+    atualizar(p);
+  }
+}
+
+function frame(t) {
+  // rasto suave
+  ctx.fillStyle = 'rgba(5, 6, 15, 0.35)';
+  ctx.fillRect(0, 0, W, H);
+
+  progresso += ((modoCruzeiro ? 1 : 0) - progresso) * 0.05;
+
+  const todas = particulas.concat(estrelasCruz);
+  particulas.forEach(atualizar);
+  estrelasCruz.forEach(atualizarCruz);
+
+  // Ligações entre estrelas (O(n²), por isso limitamos n e a distância)
+  for (let i = 0; i < todas.length; i++) {
+    for (let j = i + 1; j < todas.length; j++) {
+      const d = distancia(todas[i], todas[j]);
+      if (d < CFG.distLigacao) {
+        linha(todas[i], todas[j], (1 - d / CFG.distLigacao) * 0.45);
+      }
+    }
+  }
+
+  // Ligações ao cursor
+  if (rato.ativo) {
+    for (const p of todas) {
+      const d = distancia(p, rato);
+      if (d < CFG.distRato) linha(p, rato, (1 - d / CFG.distRato) * 0.8, 1.2);
+    }
+    estrela({ x: rato.x, y: rato.y, r: 2.2, fase: 0 }, t, 1);
+  }
+
+  // Estrelas normais
+  particulas.forEach(p => estrela(p, t, 0.8));
+
+  // Cruzeiro do Sul
+  if (progresso > 0.02) {
+    ctx.globalAlpha = progresso;
+    for (const [a, b] of LINHAS_CRUZEIRO) {
+      linha(estrelasCruz[a], estrelasCruz[b], 0.9, 1.6);
+    }
+    ctx.globalAlpha = 1;
+  }
+  estrelasCruz.forEach(p => estrela(p, t, 1.2));
+
+  if (progresso > 0.6) {
+    ctx.globalAlpha = (progresso - 0.6) / 0.4;
+    ctx.fillStyle = '#c9d3ff';
+    ctx.font = '13px system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    for (const p of estrelasCruz) ctx.fillText(p.nome, p.x + 12, p.y + 4);
+    ctx.font = '600 18px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Cruzeiro do Sul', W / 2, H - 50);
+    ctx.globalAlpha = 1;
+  }
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
