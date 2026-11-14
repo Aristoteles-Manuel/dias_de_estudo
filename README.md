@@ -18,6 +18,8 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 8 | Idade |
 | 9 | Contagem de 1 a 100 |
 | 10 | Jogo da Senha |
+| 11 | Calculadora |
+| 12 | Tabuada |
 
 ## Como correr
 
