@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia 13 — Lista de Compras</title>
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(11, 87, 228, 0.795);
+}
+header{
+  text-align: center;
+  color: white;
+}
+section{
+  background-color: white;
+  padding: 15px;
+  max-width: 500px;
+  border-radius: 10px;
+  margin: auto;
+}
+select#flista{
+  width: 250px;
+  max-width: 100%;
+}
+footer{
+  text-align: center;
+  color: white;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Lista de Compras</h1>
+</header>
+<section>
+  <div>Frutas:
+    <input type="text" name="fruta" id="fruta">
+    <input type="button" value="Adicionar" onclick="adicionar()"> <br><br>
+    <select name="flista" id="flista" size="6"></select>
+    <br>
+    <input type="button" value="Finalizar" onclick="finalizar()">
+  </div>
+  <div id="res"></div>
+</section>
+<footer><p>&copy; Aristóteles M. Sites</p></footer>
+<script>
+let fruta = document.querySelector('input#fruta')
+let lista = document.querySelector('select#flista')
+let res = document.querySelector('div#res')
+let frutas = []
+
+function adicionar() {
+  let nome = fruta.value.trim()
+  if (nome === '') {
+    alert('Escreve o nome de uma fruta!')
+  } else if (frutas.includes(nome.toLowerCase())) {
+    alert('Essa fruta já está na lista!')
+  } else {
+    frutas.push(nome.toLowerCase())
+    let item = document.createElement('option')
+    item.textContent = nome
+    lista.appendChild(item)
+    res.innerHTML = ''
+  }
+  fruta.value = ''
+  fruta.focus()
+}
+
+function finalizar() {
+  let total = frutas.length
+  if (total === 0) {
+    alert('Adiciona frutas à lista antes de finalizar')
+  } else if (total === 1) {
+    res.innerHTML = `Temos apenas ${total} fruta cadastrada na lista.`
+  } else {
+    res.innerHTML = `Temos ${total} frutas cadastradas na lista.`
+  }
+}
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

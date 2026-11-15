@@ -20,6 +20,7 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 10 | Jogo da Senha |
 | 11 | Calculadora |
 | 12 | Tabuada |
+| 13 | Lista de Compras |
 
 ## Como correr
 
