@@ -21,6 +21,7 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 11 | Calculadora |
 | 12 | Tabuada |
 | 13 | Lista de Compras |
+| 14 | Leia Positivo |
 
 ## Como correr
 

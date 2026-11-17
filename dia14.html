@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia 14 — Leia Positivo</title>
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(11, 87, 228, 0.795);
+}
+header{
+  text-align: center;
+  color: white;
+}
+section{
+  background-color: white;
+  padding: 15px;
+  max-width: 500px;
+  border-radius: 10px;
+  margin: auto;
+}
+select#ires{
+  width: 200px;
+  max-width: 100%;
+}
+footer{
+  text-align: center;
+  color: white;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Leia Positivo</h1>
+</header>
+<section>
+  <p>Número: <input type="number" name="num" id="tnum">
+  <input type="button" value="Adicionar" onclick="adicionar()">
+  </p>
+  <select name="res" id="ires" size="7"></select>
+</section>
+<footer><p>&copy; Aristóteles M. Sites</p></footer>
+<script>
+let tnum = document.querySelector('input#tnum')
+let ires = document.querySelector('select#ires')
+
+function adicionar() {
+  let num = Number(tnum.value)
+  if (tnum.value === '') {
+    alert('Escreve um número!')
+  } else if (num <= 0) {
+    alert(`[ERRO] ${num} não é positivo`)
+  } else {
+    let item = document.createElement('option')
+    item.textContent = `Valor ${num} adicionado.`
+    ires.appendChild(item)
+  }
+  tnum.value = ''
+  tnum.focus()
+}
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
