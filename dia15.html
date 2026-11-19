@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia 15 — Conversor de Moedas</title>
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(11, 87, 228, 0.795);
+}
+header{
+  text-align: center;
+  color: white;
+}
+section{
+  background-color: white;
+  padding: 15px;
+  max-width: 500px;
+  border-radius: 10px;
+  margin: auto;
+}
+select, input[type="number"]{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  margin: 4px 0 12px;
+  font-size: 16px;
+}
+.troca{
+  text-align: center;
+}
+#res{
+  margin-top: 14px;
+  font-size: 20px;
+  font-weight: bold;
+}
+small{
+  display: block;
+  margin-top: 14px;
+  color: #666;
+}
+footer{
+  text-align: center;
+  color: white;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Conversor de Moedas</h1>
+</header>
+<section>
+  <p>Valor: <input type="number" name="valor" id="valor"></p>
+  De:
+  <select name="de" id="de">
+    <option value="AOA">🇦🇴 Kwanza (AOA)</option>
+    <option value="USD">🇺🇸 Dólar (USD)</option>
+    <option value="EUR">🇵🇹 Euro (EUR)</option>
+    <option value="BRL">🇧🇷 Real (BRL)</option>
+  </select>
+  <div class="troca"><input type="button" value="⇅ Trocar" onclick="trocar()"></div>
+  Para:
+  <select name="para" id="para">
+    <option value="USD">🇺🇸 Dólar (USD)</option>
+    <option value="AOA">🇦🇴 Kwanza (AOA)</option>
+    <option value="EUR">🇵🇹 Euro (EUR)</option>
+    <option value="BRL">🇧🇷 Real (BRL)</option>
+  </select>
+  <input type="button" value="Converter" onclick="converter()">
+  <div id="res"></div>
+  <small>Taxas de exemplo (referência: 1 USD), não servem para câmbio real.</small>
+</section>
+<footer><p>&copy; Aristóteles M. Sites</p></footer>
+<script>
+let valor = document.querySelector('input#valor')
+let de = document.querySelector('select#de')
+let para = document.querySelector('select#para')
+let res = document.querySelector('div#res')
+let taxas = { USD: 1, EUR: 0.891, BRL: 5.07, AOA: 912 }
+
+function formatar(numero, moeda) {
+  return new Intl.NumberFormat('pt-AO', { style: 'currency', currency: moeda }).format(numero)
+}
+
+function converter() {
+  let num = Number(valor.value)
+  if (valor.value === '') {
+    alert('Escreve um valor!')
+  } else if (num <= 0) {
+    alert(`[ERRO] ${num} não é positivo`)
+  } else {
+    let emDolar = num / taxas[de.value]
+    let final = emDolar * taxas[para.value]
+    let origem = formatar(num, de.value)
+    let destino = formatar(final, para.value)
+    res.innerHTML = `${origem} = ${destino}`
+  }
+  valor.focus()
+}
+
+function trocar() {
+  let temp = de.value
+  de.value = para.value
+  para.value = temp
+}
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
