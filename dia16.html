@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia 16 — Contador</title>
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(11, 87, 228, 0.795);
+}
+header{
+  text-align: center;
+  color: white;
+}
+section{
+  background-color: white;
+  padding: 25px 15px;
+  max-width: 500px;
+  border-radius: 10px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+button{
+  font-size: 32px;
+  width: 90px;
+  height: 56px;
+  cursor: pointer;
+}
+#resultado{
+  font-size: 72px;
+  font-weight: bold;
+  min-width: 110px;
+  text-align: center;
+}
+footer{
+  text-align: center;
+  color: white;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Contador</h1>
+</header>
+<section>
+  <button id="mais">+</button>
+  <div id="resultado">0</div>
+  <button id="menos">&minus;</button>
+</section>
+<footer><p>&copy; Aristóteles M. Sites</p></footer>
+<script>
+var resultado = document.querySelector('#resultado')
+const btnMais = document.querySelector('#mais')
+const btnMenos = document.querySelector('#menos')
+
+var contagem = 0
+
+btnMais.addEventListener('click', adicionar)
+btnMenos.addEventListener('click', tirar)
+
+function adicionar() {
+  contagem += 1
+  resultado.innerHTML = contagem
+}
+
+function tirar() {
+  contagem -= 1
+  if (contagem < 1) {
+    resultado.innerHTML = contagem = 0
+  }
+  resultado.innerHTML = contagem
+}
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

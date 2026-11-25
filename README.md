@@ -23,6 +23,7 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 13 | Lista de Compras |
 | 14 | Leia Positivo |
 | 15 | Conversor de Moedas |
+| 16 | Contador |
 
 ## Como correr
 
