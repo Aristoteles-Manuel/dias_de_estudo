@@ -24,6 +24,7 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 14 | Leia Positivo |
 | 15 | Conversor de Moedas |
 | 16 | Contador |
+| 17 | Hora do Dia |
 
 ## Como correr
 
