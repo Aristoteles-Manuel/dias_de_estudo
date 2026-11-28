@@ -25,6 +25,7 @@ A página inicial (`index.html`) lista todos os dias e destaca o mais recente.
 | 15 | Conversor de Moedas |
 | 16 | Contador |
 | 17 | Hora do Dia |
+| 18 | Listas da Mãe e do Pai |
 
 ## Como correr
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dia 18 — Listas da Mãe e do Pai</title>
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgba(11, 87, 228, 0.795);
+}
+header{
+  text-align: center;
+  color: white;
+}
+section{
+  background-color: white;
+  padding: 15px;
+  max-width: 500px;
+  border-radius: 10px;
+  margin: auto;
+}
+select#flista{
+  width: 250px;
+  max-width: 100%;
+}
+footer{
+  text-align: center;
+  color: white;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="titulo">Lista da mãe</h1>
+</header>
+<section>
+  <div>Produto:
+    <input type="text" name="produto" id="produto">
+    <input type="button" value="Adicionar" onclick="adicionar()"> <br><br>
+    <select name="flista" id="flista" size="6"></select>
+    <br>
+    <input type="button" value="Finalizar" onclick="finalizar()">
+  </div>
+</section>
+<footer><p>&copy; Aristóteles M. Sites</p></footer>
+<script>
+let produto = document.querySelector('input#produto')
+let lista = document.querySelector('select#flista')
+let titulo = document.querySelector('h1#titulo')
+let listaMae = []
+let listaPai = []
+let fase = 1
+
+function mostrar(array) {
+  lista.innerHTML = ''
+  for (let item of array) {
+    let opcao = document.createElement('option')
+    opcao.textContent = item
+    lista.appendChild(opcao)
+  }
+}
+
+function adicionar() {
+  if (fase === 3) return
+  let nome = produto.value.trim().toLowerCase()
+  let atual = fase === 1 ? listaMae : listaPai
+  produto.value = ''
+  produto.focus()
+  if (nome === '') return alert('Escreve o nome de um produto!')
+  if (atual.includes(nome)) return alert('Esse produto já está na lista!')
+  atual.push(nome)
+  mostrar(atual)
+}
+
+function finalizar() {
+  if (fase === 3) return
+  let atual = fase === 1 ? listaMae : listaPai
+  if (atual.length === 0) return alert('Adiciona produtos antes de finalizar')
+  if (fase === 1) {
+    fase = 2
+    titulo.textContent = 'Lista do pai'
+    mostrar(listaPai)
+  } else {
+    fase = 3
+    titulo.textContent = 'Listas juntas'
+    mostrar(listaMae.concat(listaPai))
+  }
+}
+</script>
+<script data-goatcounter="https://aristoteles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
